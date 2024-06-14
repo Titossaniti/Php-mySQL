@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="output.css">
 </head>
 
-<body class="bg-gray-200 container mx-auto p-4">
+<body class="bg-blue-100 container mx-auto p-4">
         <header>
             <nav>
                 <a href="index.php" class="nav-menu-item">
-                    Utilisateurs
+                    Voir les Utilisateurs
                 </a>|
-                <a href="form_add.php" class="nav-menu-item">
+                <a href="form_add.php" class="nav-menu-item ml-3">
                     Ajouter un Utilisateur
+                </a>|
+                <a href="form_role.php" class="nav-menu-item ml-3">
+                    Gérer les rôles
+                </a>|
+                <a href="form_permission.php" class="nav-menu-item ml-3">
+                    Gérer les permissions
                 </a>
             </nav>
         </header>

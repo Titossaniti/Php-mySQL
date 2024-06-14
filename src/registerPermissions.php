@@ -9,9 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt) {
         $stmt->bind_param("s", $permission_name);
         if ($stmt->execute()) {
-            header("Location: index.php");
+            header("Location: form_permission.php");
         } else {
             echo "Erreur : " . $sql . "<br>" . $stmt->error;
         }
+    } else {
+        echo "Erreur lors de la préparation de la requête : " . $conn->error;
     }
 }

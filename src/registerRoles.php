@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -8,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt) {
         $stmt->bind_param("s", $role_name);
         if ($stmt->execute()) {
-            header("Location: .php");
+            header("Location: form_role.php");
         } else {
             echo "Erreur : " . $sql . "<br>" . $stmt->error;
         }

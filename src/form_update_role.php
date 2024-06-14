@@ -1,32 +1,40 @@
 <?php
-ob_start();
 global $conn;
 require_once 'config.php';
-$id = $_GET['id'];
-$sql =
-    "SELECT u.id, username ,email, r.role_name
-        FROM users u
-        JOIN users_roles ur ON u.id = ur.id
-        JOIN roles r ON ur.role_id = r.role_id
-        WHERE u.id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+
+if (isset($_GET['id'])) {
+    $role_id = intval($_GET['id']);
+
+    // Obtenir les détails du rôle
+    $sql_role = "SELECT role_id, role_name FROM roles WHERE role_id = ?";
+    $stmt = $conn->prepare($sql_role);
+    $stmt->bind_param('i', $role_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $role = $result->fetch_assoc();
+    } else {
+        echo "Rôle non trouvé.";
+        exit;
+    }
+
+    $stmt->close();
+} else {
+    echo "Identifiant du rôle non fourni.";
+    exit;
+}
 ?>
-<form action="updateRoles.php" method="post">
-    ID: <input type="text" name="id" value="<?= htmlspecialchars($user['id']) ?>" readonly><br>
-    Role : <select name="role_name" id="role_name">
-        <option value="Admin" <?= $user['role_name'] == 'Admin' ? 'selected' : '' ?>>Admin</option>
-        <option value="Editor" <?= $user['role_name'] == 'Editor' ? 'selected' : '' ?>>Editor</option>
-        <option value="Viewer" <?= $user['role_name'] == 'Viewer' ? 'selected' : '' ?>>Viewer</option>
-        <option value="Contributor" <?= $user['role_name'] == 'Contributor' ? 'selected' : '' ?>>Contributor</option>
-        <option value="Moderator" <?= $user['role_name'] == 'Moderator' ? 'selected' : '' ?>>Moderator</option>
-    </select>
-    <button>Mettre à jour</button>
+
+<form method="post" action="update_role.php">
+    <input type="hidden" name="role_id" value="<?php echo $role['role_id'] ?>">
+    <label for="role_name">Nom du rôle :</label>
+    <input type="text" id="role_name" name="role_name" value="<?php echo htmlspecialchars($role['role_name']) ?>" required>
+    <button type="submit">Mettre à jour</button>
 </form>
-<?php $title = "Modifier le rôle de l'utilisateur";
+<a href="form_role.php">Annuler</a>
+
+<?php
+$title = 'Modifier un rôle';
 $content = ob_get_clean();
-require_once 'layout.php';
+require 'layout.php';
