@@ -1,49 +1,56 @@
 <?php
+// src/users/index.php
 global $conn;
 ob_start();
-require 'config.php';
+require_once 'config.php';
 
-$sql =
-    "SELECT u.id, username ,email, role_name
-        FROM users u
-        LEFT JOIN users_roles ur ON u.id = ur.id
-        LEFT JOIN roles r ON ur.role_id = r.role_id
-        ORDER BY role_name ASC";
+$sql = "SELECT users.id, username, email, GROUP_CONCAT(role_name) as role_name
+FROM users
+left JOIN users_roles ON users.id = users_roles.id
+left JOIN roles ON users_roles.role_id = roles.role_id
+GROUP BY users.id
+ORDER BY users.id";
 $result = $conn->query($sql);
+$users = $result->fetch_all(MYSQLI_ASSOC);
+// var_dump($users);
 ?>
 <?php if ($result->num_rows > 0) : ?>
     <table>
-        <tr>
+        <tr class="text-left">
             <th>ID</th>
             <th>Nom d'utilisateur</th>
             <th>Email</th>
-            <th>Delete</th>
-            <th>Role</th>
+            <th>Roles</th>
+            <th>Supprimer</th>
         </tr>
-        <?php while ($row = $result->fetch_assoc()) : ?>
+        <?php foreach ($users as $user) : ?>
             <tr>
-                <td><?= $row["id"]; ?></td>
+                <td><?php echo $user['id'] ?></td>
                 <td>
-                    <a href="form_update.php?id=<?= $row["id"]?>">
-                        <?= $row["username"]; ?>
+                    <a href="form_update.php?id=<?= $user['id'] ?>">
+                        <?= $user['username'] ?>
                     </a>
                 </td>
-                <td><?= $row["email"]; ?></td>
+                <td><?= $user['email'] ?></td>
                 <td>
-                    <a href="delete.php?id=<?= $row["id"]?>">❌</a>
+                    <?php
+                    if ($user['role_name']) :
+                        $roles = explode(',', $user['role_name']);
+                        foreach ($roles as $role) : ?>
+                            <span class="badge <?= $role ?>"><?= $role ?></span>
+                        <?php endforeach ?>
+                    <?php endif ?>
                 </td>
                 <td>
-                    <a href="form_update_role.php?id=<?= $row["id"]?>">
-                        <?= $row["role_name"]; ?>
-                    </a>
+                    <a href="delete.php?id=<?= $user['id'] ?>">❌</a>
                 </td>
             </tr>
-        <?php endwhile; ?>
+        <?php endforeach ?>
     </table>
 <?php else : ?>
-    <p>0 résultats</p>
+    <p>Pas de résultats</p>
 <?php endif;
 
-$title = "Liste des utilisateurs";
+$title = 'Liste des utilisateurs';
 $content = ob_get_clean();
 require 'layout.php';

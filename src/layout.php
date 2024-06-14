@@ -7,22 +7,20 @@
     <link rel="stylesheet" href="output.css">
 </head>
 
-<body class="bg-gray-200">
-    <div class="container mx-auto p-4">
+<body class="bg-gray-200 container mx-auto p-4">
         <header>
             <nav>
-                <a href="index.php" class="text-blue-500 hover:underline">
+                <a href="index.php" class="nav-menu-item">
                     Utilisateurs
-                </a>
-                <a href="form_add.php" class="text-blue-500 hover:underline">
+                </a>|
+                <a href="form_add.php" class="nav-menu-item">
                     Ajouter un Utilisateur
                 </a>
             </nav>
         </header>
         <main>
-            <h5><?php echo $title ?></h5>
+            <h1 class="text-5xl my-4"><?php echo $title ?></h1>
             <?php echo $content ?>
         </main>
-    </div>
 </body>
 </html>
